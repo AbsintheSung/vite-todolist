@@ -45,7 +45,7 @@ import TitleImage from '../components/TitleImage.vue'
 
 
                 <button class="align-self-center py-12 px-5 bg-dark text-white" @click.prevent="">註冊帳號</button>
-                <router-link to="/vite-todolist/login" class="fw-bold text-dark align-self-center mt-4 text-decoration-none">登入</router-link>
+                <router-link to="login" class="fw-bold text-dark align-self-center mt-4 text-decoration-none">登入</router-link>
             </form>
 
         </div>
