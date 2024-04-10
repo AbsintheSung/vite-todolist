@@ -1,0 +1,14 @@
+.register-container{
+    padding: 0px 32px;
+    margin: 0px auto;
+    max-width: 100%;
+    @include XLarge{
+        max-width: 1028px;
+    }
+}
+
+.register-form-size{
+    @include Medium{
+        width: 42%;
+    }
+}

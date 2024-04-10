@@ -1,0 +1,53 @@
+// @mixin Phone{
+//     //375px + 24
+//     @media (max-width: (375px) ){
+//         @content;
+//     }
+// }
+// @mixin Small{
+//     @media (max-width: (575px) ){
+//         @content;
+//     }
+// }
+// @mixin Medium{
+//     @media (max-width: (767px ) ){
+//         @content;
+//     }
+// }
+// @mixin Large{
+//     @media (max-width: (992px) ){
+//         @content;
+//     }
+// }
+// @mixin XLarge{
+//     @media (max-width: (1200px) ){
+//         @content;
+//     }
+// }
+
+@mixin Phone{
+    //當 裝置 大於或等於 375的時候套用
+    @media (min-width:375px ){
+        @content;
+    }
+}
+@mixin Small{
+    @media (min-width:575px){
+        @content;
+    }
+}
+@mixin Medium{
+    @media (min-width: 767px  ){
+        @content;
+    }
+}
+@mixin Large{
+    @media (min-width: 992px ){
+        @content;
+    }
+}
+@mixin XLarge{
+    @media (min-width: 1200px ){
+        @content;
+    }
+}
