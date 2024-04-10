@@ -1,6 +1,8 @@
 <script setup>
 import TodoListTitle from '../components/TodoList-Title.vue';
-
+import { useRoute } from 'vue-router';
+const currentRoute = useRoute();
+console.log(currentRoute.fullPath)
 
 </script>
 
@@ -28,44 +30,56 @@ import TodoListTitle from '../components/TodoList-Title.vue';
             
             <ul class="todo-list">
                 <li>
-                    <input type="checkbox" id="item1" name="item1" value="">
-                    <label for="item1">把冰箱發霉的檸檬拿去丟</label>
+                    <div>
+                        <input type="checkbox" id="item1" name="item1" value="">
+                        <label for="item1"  @mousedown.prevent>把冰箱發霉的檸檬拿去丟</label>
+                    </div>
+                  
                     <a class="delete-link"><span class="material-icons-outlined delete-icon">clear</span></a>  
                 </li>
 
                 <li>
-                    <input type="checkbox" id="item2" name="item2" value="">
-                    <label for="item2">打電話叫媽媽匯款給我</label>
+                    <div>
+                        <input type="checkbox" id="item2" name="item2" value="">
+                        <label for="item2"  @mousedown.prevent>打電話叫媽媽匯款給我</label>
+                    </div>
                     <a class="delete-link"><span class="material-icons-outlined delete-icon">clear</span></a>  
                 </li>
 
                 <li>
-                    <input type="checkbox" id="item3" name="item3" value="">
-                    <label for="item3">整理電腦資料夾</label>
+                    <div>
+                        <input type="checkbox" id="item3" name="item3" value="">
+                        <label for="item3"  @mousedown.prevent>整理電腦資料夾</label>
+                    </div>
                     <a class="delete-link"><span class="material-icons-outlined">clear</span></a>  
                 </li>
 
                 <li>
-                    <input type="checkbox" id="item4" name="item4" value="">
-                    <label for="item4" @mousedown.prevent>繳電費水費瓦斯費</label>
+                    <div>
+                        <input type="checkbox" id="item4" name="item4" value="">
+                        <label for="item4" @mousedown.prevent>繳電費水費瓦斯費</label>
+                    </div>
                     <a class="delete-link"><span class="material-icons-outlined delete-icon">clear</span></a>  
                 </li>
 
                 <li>
-                    <input type="checkbox" id="item5" name="item5" value="">
-                    <label for="item5">約vicky禮拜三泡溫泉</label>
+                    <div>
+                        <input type="checkbox" id="item5" name="item5" value="">
+                        <label for="item5"  @mousedown.prevent>約vicky禮拜三泡溫泉</label>
+                    </div>
                     <a class="delete-link"><span class="material-icons-outlined delete-icon">clear</span></a>  
                 </li>
 
                 <li>
-                    <input type="checkbox" id="item6" name="item6" value="">
-                    <label for="item6">約ada禮拜四吃晚餐</label>
+                    <div>
+                        <input type="checkbox" id="item6" name="item6" value="">
+                        <label for="item6"  @mousedown.prevent>約ada禮拜四吃晚餐</label>
+                    </div>
                     <a class="delete-link"><span class="material-icons-outlined delete-icon">clear</span></a>  
                 </li>
-
-                
 
             </ul>
+            <div>測試</div>
         </div>
        
 
@@ -78,9 +92,22 @@ import TodoListTitle from '../components/TodoList-Title.vue';
 
 
 <style lang="scss" scoped>
+
 li{
     display: flex;
-    align-items: center
+    align-items: center;
+    margin: 16px 0px;
+    >div{
+        width: 100%;
+        padding-bottom: 16px;
+        border-bottom:1px solid #E5E5E5 ;
+        >label{
+            margin-left: 16px;
+        }
+    }
+    >a{
+        align-self: flex-start;
+    }
 }
 .delete-link{
     display: flex;
@@ -113,47 +140,10 @@ li{
     
 }
 .todo-list{
-    background-color: #FFFFFF;
-    border-radius: 0px 0px 10px 10px;
+    // background-color: #FFFFFF;
+    // border-radius: 0px 0px 10px 10px;
     padding: 16px;
-    >li{
-        display: flex;
-        align-items: center;
-        >label{
-            margin-left: 16px;
-        }
-        >a{
-            margin-left:auto ;
-        }
-    }
 }
-// header{
-//     display: flex;
-//     justify-content: space-between;
-//     padding-top: 16px;
-// }
-// .input-box{
-//     position: relative;
-//     margin: 16px 0px;
-//     >input{
-//         width: 100%;
-//         padding: 12px 16px;
-//     }
-// }
-// .addinput{
-//     position: absolute;
-//     top: 50%;
-//     right:4px;
-//     transform: translateY(-50%);
-//     display: flex;
-//     justify-content: center;
-//     align-items: center;
-//     width: 40px;
-//     height: 40px;
-//     color: white;
-//     border: none;
-//     border-radius: 10px;
-//     background-color: black;
-// }
+
 
 </style>

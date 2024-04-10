@@ -15,8 +15,9 @@ import router from './router';
 
 <style lang="scss">
 body{
-    // min-height: 100vh;
+    min-height: 100vh;
     background-color: #FFD370;
+    // background: linear-gradient(170deg, #FFD370 55%, #FFFFFF 45%);
 }
 
     

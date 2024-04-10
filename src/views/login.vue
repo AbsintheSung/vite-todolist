@@ -1,6 +1,9 @@
 <script setup>
 import TodoListTitle from '../components/TodoList-Title.vue';
 import TitleImage from '../components/TitleImage.vue'
+import { useRoute } from 'vue-router';
+const currentRoute = useRoute();
+console.log(currentRoute.fullPath)
 
 </script>
 
