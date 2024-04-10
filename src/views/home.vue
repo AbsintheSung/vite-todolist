@@ -19,38 +19,55 @@ import TodoListTitle from '../components/TodoList-Title.vue';
             <button class="addinput"><span class="material-icons-outlined">add</span></button>
         </div>
 
-        <div>
-            <button>全部</button>
-            <button>待完成</button>
-            <button>已完成</button>
+        <div class="list-box">
+            <div class="filter-btnbox">
+                <button>全部</button>
+                <button>待完成</button>
+                <button>已完成</button>
+            </div>
+            
+            <ul class="todo-list">
+                <li>
+                    <input type="checkbox" id="item1" name="item1" value="">
+                    <label for="item1">把冰箱發霉的檸檬拿去丟</label>
+                    <a class="delete-link"><span class="material-icons-outlined delete-icon">clear</span></a>  
+                </li>
+
+                <li>
+                    <input type="checkbox" id="item2" name="item2" value="">
+                    <label for="item2">打電話叫媽媽匯款給我</label>
+                    <a class="delete-link"><span class="material-icons-outlined delete-icon">clear</span></a>  
+                </li>
+
+                <li>
+                    <input type="checkbox" id="item3" name="item3" value="">
+                    <label for="item3">整理電腦資料夾</label>
+                    <a class="delete-link"><span class="material-icons-outlined">clear</span></a>  
+                </li>
+
+                <li>
+                    <input type="checkbox" id="item4" name="item4" value="">
+                    <label for="item4" @mousedown.prevent>繳電費水費瓦斯費</label>
+                    <a class="delete-link"><span class="material-icons-outlined delete-icon">clear</span></a>  
+                </li>
+
+                <li>
+                    <input type="checkbox" id="item5" name="item5" value="">
+                    <label for="item5">約vicky禮拜三泡溫泉</label>
+                    <a class="delete-link"><span class="material-icons-outlined delete-icon">clear</span></a>  
+                </li>
+
+                <li>
+                    <input type="checkbox" id="item6" name="item6" value="">
+                    <label for="item6">約ada禮拜四吃晚餐</label>
+                    <a class="delete-link"><span class="material-icons-outlined delete-icon">clear</span></a>  
+                </li>
+
+                
+
+            </ul>
         </div>
-        
-        <ul>
-            <li>
-                <input type="checkbox" id="item1" name="item1" value="">
-                <label for="item1">事項 - 1</label>
-                <a><span class="material-icons-outlined delete-icon">clear</span></a>  
-            </li>
-
-            <li>
-                <input type="checkbox" id="item1" name="item1" value="">
-                <label for="item1">事項 - 1</label>
-                <a><span class="material-icons-outlined delete-icon">clear</span></a>  
-            </li>
-
-            <li>
-                <input type="checkbox" id="item1" name="item1" value="">
-                <label for="item1">事項 - 1</label>
-                <a><span class="material-icons-outlined delete-icon">clear</span></a>  
-            </li>
-
-            <li>
-                <input type="checkbox" id="item1" name="item1" value="">
-                <label for="item1">事項 - 1</label>
-                <a><span class="material-icons-outlined delete-icon">clear</span></a>  
-            </li>
-
-        </ul>
+       
 
     </div>
 
@@ -65,8 +82,50 @@ li{
     display: flex;
     align-items: center
 }
-.delete-icon{
-    height: 100%;
+.delete-link{
+    display: flex;
+    text-decoration-line: none;
+    >span{
+        color:black;
+    }
+}
+.list-box{
+    margin: 0 auto;
+}
+.filter-btnbox{
+    display: flex;
+    >button{
+        flex:1;
+        border: none;
+        padding: 16px 0px;
+        background-color: #FFFFFF;
+        border-bottom: 2px solid #EFEFEF;
+    }
+    >button:first-child{
+        border-radius: 10px 0px 0px 0px;
+    }
+    >button:last-child{
+        border-radius: 0px 10px 0px 0px;
+    }
+    >button:hover{
+        border-bottom: 2px solid black;
+    }
+    
+}
+.todo-list{
+    background-color: #FFFFFF;
+    border-radius: 0px 0px 10px 10px;
+    padding: 16px;
+    >li{
+        display: flex;
+        align-items: center;
+        >label{
+            margin-left: 16px;
+        }
+        >a{
+            margin-left:auto ;
+        }
+    }
 }
 // header{
 //     display: flex;

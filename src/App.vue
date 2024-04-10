@@ -6,7 +6,7 @@ import router from './router';
 
 <template>
 
-    <div class="container-fluid bg-primary px-0 ">
+    <div class="container-fluid  px-0 ">
         <router-view></router-view>
     </div>
   
