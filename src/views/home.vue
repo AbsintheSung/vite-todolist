@@ -10,7 +10,8 @@ import TodoListTitle from '../components/TodoList-Title.vue';
     <div class="home-container">
         <header>
             <TodoListTitle />
-            <a>登出</a>
+            <!-- <a>登出</a> -->
+            <router-link style="color: red;" to="/vite-todolist/login">登出</router-link>
         </header>
         
         <div class="input-box">
