@@ -1,9 +1,40 @@
 <script setup>
+import { ref } from 'vue';
 import TodoListTitle from '../components/TodoList-Title.vue';
 import TitleImage from '../components/TitleImage.vue'
 import { useRoute } from 'vue-router';
 const currentRoute = useRoute();
-console.log(currentRoute.fullPath)
+
+const userInput = ref({
+    "email": "",
+    "password": ""
+})
+async function login(){
+    try {
+        let user = {
+            "email":userInput.value.email ,
+            "password":userInput.value.password
+        }
+        let response = await fetch('https://todolist-api.hexschool.io/users/sign_in',{
+            body:JSON.stringify(user),
+            cache: "no-cache",
+            headers: {
+                "user-agent": "Mozilla/4.0 MDN Example",
+                "content-type": "application/json",
+            },
+            method: "POST",
+        })
+        if(!response.ok){
+            const errorMessage = await response.json();
+            console.log('錯誤資訊',errorMessage)
+        }
+        let data = await response.json()
+        console.log('正確資訊',data)
+    } catch (error) {
+        
+    }
+   
+}
 
 </script>
 
@@ -26,18 +57,18 @@ console.log(currentRoute.fullPath)
             <form class="d-flex flex-column justify-content-center align-items-start">
                 <div class="d-flex flex-column w-100">
                     <label>Email</label>
-                    <input type="text" placeholder="請輸入Email">
+                    <input type="text" placeholder="請輸入Email" v-model="userInput.email">
                     <p>欄位不可為空</p>
                 </div>
 
                 <div class="d-flex flex-column w-100">
                     <label>Password</label>
-                    <input type="password" placeholder="請輸入密碼">
+                    <input type="password" placeholder="請輸入密碼" v-model="userInput.password">
                     <p>欄位不可為空</p>
                 </div>
 
 
-                <button class="align-self-center py-12 px-5 bg-dark text-white" @click.prevent="">登入</button>
+                <button class="align-self-center py-12 px-5 bg-dark text-white" @click.prevent="login">登入</button>
                 <router-link to="register" class="fw-bold text-dark align-self-center mt-4 text-decoration-none">註冊帳號</router-link>
             </form>
 

@@ -1,9 +1,46 @@
 <script setup>
+import { ref } from 'vue';
 import TodoListTitle from '../components/TodoList-Title.vue';
-import TitleImage from '../components/TitleImage.vue'
-import { useRoute } from 'vue-router';
-const currentRoute = useRoute();
-console.log(currentRoute.fullPath)
+import TitleImage from '../components/TitleImage.vue';
+
+const userInput = ref({
+    email:"",
+    nickname:"",
+    password:"",
+})
+async function tesregisterAccountt(){
+    let user={
+        "email":userInput.value.email,
+        "nickname":userInput.value.nickname,
+        "password":userInput.value.password
+    }
+    try {
+        let data = await fetch('https://todolist-api.hexschool.io/users/sign_up',{
+            body:JSON.stringify(user),
+            cache: "no-cache",
+            headers: {
+                "user-agent": "Mozilla/4.0 MDN Example",
+                "content-type": "application/json",
+            },
+            method: "POST",
+           
+        })
+        if( !data.ok ){
+            const errorData = await data.json();
+            console.log('錯誤資訊',errorData)
+            // throw new Error(JSON.stringify(errorData))
+        }
+        const dataJson = await data.json(); 
+        console.log('正確資訊',dataJson)
+
+    } catch (error) {
+
+    }
+   
+}
+
+
+
 
 </script>
 
@@ -23,20 +60,20 @@ console.log(currentRoute.fullPath)
             <form class="d-flex flex-column justify-content-center align-items-start">
                 <div class="d-flex flex-column w-100">
                     <label>Email</label>
-                    <input type="text" placeholder="請輸入Email">
+                    <input type="text" placeholder="請輸入Email" v-model="userInput.email">
                     <p>欄位不可為空</p>
                 </div>
 
                 <div class="d-flex flex-column w-100">
                     <label>您的暱稱</label>
-                    <input type="text" placeholder="請輸入您的暱稱">
+                    <input type="text" placeholder="請輸入您的暱稱"  v-model="userInput.nickname">
                     <p>欄位不可為空</p>
                 </div>
 
 
                 <div class="d-flex flex-column w-100">
                     <label>Password</label>
-                    <input type="password" placeholder="請輸入密碼">
+                    <input type="password" placeholder="請輸入密碼" v-model="userInput.password">
                     <p>欄位不可為空</p>
                 </div>
 
@@ -47,7 +84,7 @@ console.log(currentRoute.fullPath)
                 </div>
 
 
-                <button class="align-self-center py-12 px-5 bg-dark text-white" @click.prevent="">註冊帳號</button>
+                <button class="align-self-center py-12 px-5 bg-dark text-white" @click.prevent="tesregisterAccountt">註冊帳號</button>
                 <router-link to="login" class="fw-bold text-dark align-self-center mt-4 text-decoration-none">登入</router-link>
             </form>
 
