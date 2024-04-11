@@ -65,9 +65,7 @@ async function ttt(){
     border-right: 5px solid #FFD370;
     transform: rotate(45deg);
 }
-.buttonActive{
-    border-bottom: 2px solid black !important;
-}
+
 li{
     display: flex;
     align-items: center;
