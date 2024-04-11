@@ -107,7 +107,7 @@ function ttaa(data){
             
             <ul class="todo-list">
 
-                <ListItem v-for="item in data.todos" :key="item.id" :sendData="item" @changeComplete="ttaa"></ListItem>
+                <ListItem v-for="item in dataFilter" :key="item.id" :sendData="item" @changeComplete="ttaa"></ListItem>
                 <!-- <li v-for="item in dataFilter" :key="item.id" >
                     <div @click="www(item.id)">
                         <div class="test" v-if="item.completed_at === null"></div>
