@@ -65,6 +65,9 @@ const noFinishItem = computed(()=>{
 async function sendData(){
     console.log(userInput.value)
 }
+async function www(id){
+    console.log(id)
+}
 
 </script>
 
@@ -92,10 +95,11 @@ async function sendData(){
             
             <ul class="todo-list">
                 <li v-for="item in dataFilter" :key="item.id" >
-                    <div>
+                    <div @click="www(item.id)">
                         <!-- <input type="checkbox" :id=item.id name="" >
                         <label :for=item.id @mousedown.prevent>{{item.content}}</label> -->
                         <div class="test"></div>
+                        <div class="test2"></div>
                         <span>{{item.content}}</span>
                     </div>
                     <button class="edit-link"><span class="material-icons-outlined">drive_file_rename_outline</span></button>
@@ -161,6 +165,7 @@ async function sendData(){
                 <p>{{noFinishItem}}個待完成項目</p>
                 <button class="ms-auto border-0 bg-white">清除已完成項目</button>
             </div>
+
         </div>
        
 
@@ -180,6 +185,14 @@ async function sendData(){
     height: 20px;
     border-radius: 5px;
 }
+.test2{
+    display: inline-block;
+    width: 12px;
+    height: 20px;
+    border-bottom: 5px solid #FFD370;
+    border-right: 5px solid #FFD370;
+    transform: rotate(30deg);
+}
 .buttonActive{
     border-bottom: 2px solid black !important;
 }
@@ -194,6 +207,7 @@ li{
         >label{
             margin-left: 16px;
         }
+
     }
     >button{
         align-self: flex-start;

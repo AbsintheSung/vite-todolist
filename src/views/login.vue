@@ -30,6 +30,7 @@ async function login(){
         }
         let data = await response.json()
         console.log('正確資訊',data)
+        console.log(data.token)
     } catch (error) {
         
     }
