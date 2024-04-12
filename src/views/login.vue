@@ -28,8 +28,8 @@ async function login(){
             const errorMessage = await response.json();
             console.log('錯誤資訊',errorMessage)
         }
+        console.log('正確資訊',response)
         let data = await response.json()
-        console.log('正確資訊',data)
         console.log(data.token)
     } catch (error) {
         

@@ -1,85 +1,217 @@
 <script setup>
-import { ref , computed} from 'vue';
+//https://todolist-api.hexschool.io/doc/#/
+import { ref , computed,onBeforeMount,onMounted} from 'vue';
 import TodoListTitle from '../components/TodoList-Title.vue';
 import ListItem from '../components/listItem.vue'
 import { useRoute } from 'vue-router';
 const userInput = ref('')
-const data = ref({
-  "todos": [
-    {
-      "id": "fac3ab3af26f6a90c8db94a024ecdd27",
-      "content": "繳電費水費瓦斯費",
-      "completed_at": null
-    },
-    {
-      "id": "091e37fffb47ea2bf43e3afe1ed68310",
-      "content": "整理電腦資料夾",
-      "completed_at": '2024-04-11T14:15:14.933+08:00'
-    },
-    {
-      "id": "ef6326e91350c71a49b7d4d843d9f9a8",
-      "content": "打電話叫媽媽匯款給我",
-      "completed_at": null
-    },
-    {
-      "id": "9d99c0ba8bfef971a3edca219be64a0f",
-      "content": "把冰箱發霉的檸檬拿去丟",
-      "completed_at": '2024-04-11T14:15:14.933+08:00'
-    },
-    {
-      "id": "f4f4ac13401bfc22719cbb34d295b060",
-      "content": "我要吃晚餐",
-      "completed_at": null
-    },
-    {
-      "id": "64d86a7ea504fd1423933b5f4ce3ef06",
-      "content": "我要買飲料",
-      "completed_at": '2024-04-11T14:15:14.933+08:00'
-    },
-    {
-      "id": "0756aa8d571d1f8f412f23cebeb43b45",
-      "content": "我要幹大事",
-      "completed_at": null
-    }
-  ]
-})
 
+// const data = ref( [
+//     {
+//       "content": "繳電費，水電費，瓦斯費",
+//       "createTime": 1712890590,
+//       "id": "-NvFE2BkJ3GRWB18jEgS",
+//       "status": false
+//     },
+//     {
+//       "content": "整理電腦資料夾",
+//       "createTime": 1712890625,
+//       "id": "-NvFEAoKjhurO1wkJ3zC",
+//       "status": false
+//     },
+//     {
+//       "content": "打電話叫老媽匯款給我",
+//       "createTime": 1712890660,
+//       "id": "-NvFEJKsYMUDDrDA7nJa",
+//       "status": true
+//     },
+//     {
+//       "content": "把冰箱發霉的檸檬拿去丟",
+//       "createTime": 1712890677,
+//       "id": "-NvFENQg_XvDxFsuJd7k",
+//       "status": false
+//     },
+//     {
+//       "content": "我要吃晚餐",
+//       "createTime": 1712890688,
+//       "id": "-NvFEQ9sF0P4ofITu6iG",
+//       "status": false
+//     },
+//     {
+//       "content": "我要買飲料",
+//       "createTime": 1712890696,
+//       "id": "-NvFES4faKIPQ7LoJMzT",
+//       "status": true
+//     },
+//     {
+//       "content": "我要幹大事",
+//       "createTime": 1712890703,
+//       "id": "-NvFETsFpBQJgsVEMzMu",
+//       "status": true
+//     }
+//   ])
+
+
+const data = ref([])
 const buttonState = ref('all');
+onBeforeMount(async ()=>{
+    try {
+        let response = await fetch('https://todolist-api.hexschool.io/todos/',
+        {
+            headers: {
+                'Authorization': `${token}`
+            }
+        })
+        if( !response.ok ){
+            let errorMessage = await response.json();
+            console.log('錯誤資訊',errorMessage)
+            // throw new Error(errorMessage)
+        }
+        
+        const responseData = await response.json();
+        responseData.data.forEach((item)=>data.value.push(item))
+        // console.log(data.value)
+    } catch (error) {
+        
+    }
+})
+async function getData() {
+    try {
+        let response = await fetch('https://todolist-api.hexschool.io/todos/',
+        {
+            headers: {
+                'Authorization': `${token}`
+            }
+        })
+        if( !response.ok ){
+            let errorMessage = await response.json();
+            console.log('錯誤資訊',errorMessage)
+            // throw new Error(errorMessage)
+        }
+        
+        const responseData = await response.json();
+        data.value = []
+        responseData.data.forEach((item)=>data.value.push(item))
+        // console.log(data.value)
+    } catch (error) {
+        
+    }
+   
+};
+
 
 const handleFilter = (state)=>{ buttonState.value = state }
 const dataFilter = computed(()=>{
     
     if(buttonState.value==='all'){
-        return data.value.todos
+        return data.value
     }
     if(buttonState.value==='pending'){
-        return  data.value.todos.filter((item)=>{ if(item.completed_at === null){ return item} } )
+        return  data.value.filter((item)=>{ if(!item.status){ return item} } )
     }
     if(buttonState.value==='finish'){
-        return data.value.todos.filter((item)=>{ if(typeof item.completed_at==='string'){ return item} } )
+        return data.value.filter((item)=>{ if(item.status){ return item} } )
     }
 })
 const noFinishItem = computed(()=>{
-    let noFinish = data.value.todos.filter((item)=>{ if(item.completed_at===null){ return item} } )
+    let noFinish = data.value.filter((item)=>{ if(!item.status){ return item} } )
     return noFinish.length
 })
 
-async function sendData(){
-    console.log(userInput.value)
+const dataShow = computed(()=>{
+    if(data.value.length === 0 ) return true
+    else return false
+})
+
+async function setData(){
+    try {
+        const sendContent = {
+            "content":userInput.value
+        }
+        const response = await fetch('https://todolist-api.hexschool.io/todos/',{
+            cache: "no-cache",
+            body:JSON.stringify(sendContent),
+            headers: {
+                "content-type": "application/json",
+                'Authorization': `${token}`
+            },
+            method: "POST"
+        })
+        if( !response.ok ){
+            let errorMessage = await response.json();
+            console.log('錯誤資訊',errorMessage)
+            // throw new Error(errorMessage)
+        }
+        const responseData = await response.json()
+        console.log(responseData)
+        if(responseData.status){
+            // data.value.push(responseData.newTodo)
+            getData();
+        }
+    } catch (error) {
+        
+    }
 }
-// async function www(id){
-//     let indexOf = data.value.todos.findIndex((item)=>item.id ===id )
-//     console.log( indexOf)
-//     if( data.value.todos[indexOf].completed_at === null){
-//         data.value.todos[indexOf].completed_at = '2024-04-11T14:15:14.933+08:00'
-//     }else{
-//         data.value.todos[indexOf].completed_at = null
-//     }
+
+async function handleComplete(itemData){
+    try {
+        let id = itemData.id
+        let response = await fetch(`https://todolist-api.hexschool.io/todos/${id}/toggle`,{
+            cache: "no-cache",
+            headers: {
+                "content-type": "application/json",
+                'Authorization': `${token}`
+            },
+            method: "PATCH",}
+        )
+        if( !response.ok ){
+            let errorMessage = await response.json();
+            console.log('錯誤資訊',errorMessage)
+            // throw new Error(errorMessage)
+        }
+            
+        const responseData = await response.json();
+        console.log(responseData)
+        if(responseData.status){
+            getData()
+            // const tempId = itemData.id
+            // const dataIndex = data.value.findIndex((item)=>{return item.id === tempId})
+            // data.value[dataIndex].status = !data.value[dataIndex].status
+        }
+    } catch (error) {
+        
+    }
    
-// }
-function ttaa(data){
-    console.log(data)
 }
+
+async function handleDelete(deleteData){
+    // console.log(deleteData)
+    try {
+        const response = await fetch(`https://todolist-api.hexschool.io/todos/${deleteData.id}`,{
+            cache: "no-cache",
+            headers: {
+                "content-type": "application/json",
+                'Authorization': `${token}`
+            },
+            method: "DELETE",}
+        )
+        if( !response.ok ){
+            let errorMessage = await response.json();
+            console.log('錯誤資訊',errorMessage)
+            // throw new Error(errorMessage)
+        }
+        const responseData = await response.json();
+        console.log(responseData)
+        if(responseData.status){
+            getData()
+        }
+    } catch (error) {
+        
+    }
+    
+
+}
+
 
 </script>
 
@@ -89,16 +221,18 @@ function ttaa(data){
     <div class="home-container">
         <header>
             <TodoListTitle />
-            <!-- <a>登出</a> -->
             <router-link style="color: red;" to="login">登出</router-link>
         </header>
         
         <div class="input-box">
-            <input type="text" v-model="userInput" @keyup.enter="sendData">
-            <button class="addinput" @click="sendData"><span class="material-icons-outlined">add</span></button>
+            <input type="text" v-model="userInput" @keyup.enter="setData">
+            <button class="addinput" @click="setData"><span class="material-icons-outlined">add</span></button>
         </div>
-
-        <div class="list-box">
+        <div v-if="dataShow">
+            <h3 class="text-center">目前尚無代辦事項</h3>
+            <img class="imgtest" src="../assets/img/8911ab6dcbda98df56e26aa23c6643ac.png">
+        </div>
+        <div class="list-box" v-else>
             <div class="filter-btnbox">
                 <button :class="[{buttonActive : buttonState === 'all' }]" @click="handleFilter('all')">全部</button>
                 <button :class="[{buttonActive : buttonState === 'pending' }]" @click="handleFilter('pending')">待完成</button>
@@ -107,7 +241,7 @@ function ttaa(data){
             
             <ul class="todo-list">
 
-                <ListItem v-for="item in dataFilter" :key="item.id" :sendData="item" @changeComplete="ttaa"></ListItem>
+                <ListItem v-for="item in dataFilter" :key="item.id" :sendData="item" @changeComplete="handleComplete" @deleteItem="handleDelete"></ListItem>
                 <!-- <li v-for="item in dataFilter" :key="item.id" >
                     <div @click="www(item.id)">
                         <div class="test" v-if="item.completed_at === null"></div>
@@ -139,6 +273,10 @@ function ttaa(data){
 
 
 <style lang="scss" scoped>
+.imgtest{
+    width: 100%;
+    height: 100%;
+}
 // .test{
 //     display: inline-block;
 //     width: 20px;

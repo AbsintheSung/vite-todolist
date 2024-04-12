@@ -1,4 +1,6 @@
 <script setup>
+import { ref } from 'vue'
+const isEdit = ref(false) //是否是以編輯狀態
 const props = defineProps({
 
     sendData:{
@@ -14,32 +16,45 @@ const emit = defineEmits({
         if(typeof data === "object"){
             return true
         }
+    },
+    deleteItem:(data)=>{
+        if(typeof data === "object"){
+            return true
+        }
     }
 })
 
-async function ttt(){
-    if(  props.sendData.completed_at === null){
-        props.sendData.completed_at = '2024-04-11T14:15:14.933+08:00'
-    }else{
-        props.sendData.completed_at = null
-    }
-
+function sendComplete(){
+    // props.sendData.status = !props.sendData.status
     emit('changeComplete', props.sendData)
 }
+function sendDelete(){
+    emit('deleteItem', props.sendData)
+}
+function handleEdit(){
+    isEdit.value = !isEdit.value
+}
+
+
 </script>
 
 <template>
 
 
     <li>
-        <div @click="ttt">
-            <div class="test" v-if="props.sendData.completed_at === null"></div>
-            <div class="test2" v-else-if="typeof props.sendData.completed_at === 'string'"></div>
+        
+        <div v-if="isEdit">
+            <input class="edit-input" type="text" :value="props.sendData.content">
+        </div>
+        <div v-else @click="sendComplete">
+            <div class="test" v-if="!props.sendData.status"></div>
+            <div class="test2" v-else></div>
             <p>{{props.sendData.content}}</p>
             
         </div>
-        <button class="edit-link"><span class="material-icons-outlined">drive_file_rename_outline</span></button>
-        <button class="delete-link"><span class="material-icons-outlined delete-icon">clear</span></button>  
+        <button class="edit-link" @click="handleEdit" v-if="!isEdit"><span class="material-icons-outlined">drive_file_rename_outline</span></button>
+        <button class="edit-off-link" @click="handleEdit" v-else><span class="material-icons-outlined"> edit_off </span></button>
+        <button class="delete-link" @click="sendDelete"><span class="material-icons-outlined delete-icon">clear</span></button>  
     </li>
     
 
@@ -88,12 +103,17 @@ li{
     }
 }
 
-.delete-link,.edit-link{
+.delete-link,.edit-link,.edit-off-link{
     display: flex;
     text-decoration-line: none;
     >span{
         color:black;
     }
 }
-
+.edit-input{
+    padding: 8px 16px;
+    width: 100%;
+    border: none;
+    background-color: #FFD370;
+}
 </style>
