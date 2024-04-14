@@ -1,16 +1,28 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import TodoListTitle from '../components/TodoList-Title.vue';
 import TitleImage from '../components/TitleImage.vue'
+import AlertContent from '../components/AlertContent.vue';
 import { useRoute } from 'vue-router';
 const currentRoute = useRoute();
+
+const emailAlert = ref(false)
+
+const passWordAlert = ref(false)
+
+const isDisabled = ref(false)
 
 const userInput = ref({
     "email": "",
     "password": ""
 })
+
 async function login(){
+    if(userInput.value.email === '') emailAlert.value = true
+    if(userInput.value.password === '') passWordAlert.value = true
+    if ((userInput.value.email === '') || (userInput.value.password === '')) return
     try {
+        
         let user = {
             "email":userInput.value.email ,
             "password":userInput.value.password
@@ -33,6 +45,8 @@ async function login(){
         console.log(data.token)
     } catch (error) {
         
+    }finally{
+
     }
    
 }
@@ -59,17 +73,19 @@ async function login(){
                 <div class="d-flex flex-column w-100">
                     <label>Email</label>
                     <input type="text" placeholder="請輸入Email" v-model="userInput.email">
-                    <p>欄位不可為空</p>
+                    <AlertContent :isEmail="emailAlert"/>
+                    <!-- <p>欄位不可為空</p> -->
                 </div>
 
-                <div class="d-flex flex-column w-100">
+                <div class="d-flex flex-column w-100 my-3">
                     <label>Password</label>
                     <input type="password" placeholder="請輸入密碼" v-model="userInput.password">
-                    <p>欄位不可為空</p>
+                    <AlertContent :isPassWord="passWordAlert"/>
+                    <!-- <p>欄位不可為空</p> -->
                 </div>
 
 
-                <button class="align-self-center py-12 px-5 bg-dark text-white" @click.prevent="login">登入</button>
+                <button class="align-self-center py-12 px-5 bg-dark text-white" :disabled="isDisabled" @click.prevent="login" >登入</button>
                 <router-link to="register" class="fw-bold text-dark align-self-center mt-4 text-decoration-none">註冊帳號</router-link>
             </form>
 
