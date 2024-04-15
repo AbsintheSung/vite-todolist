@@ -2,7 +2,6 @@
 import { ref } from 'vue';
 import TodoListTitle from '../components/TodoList-Title.vue';
 import TitleImage from '../components/TitleImage.vue';
-import AlertContent from '../components/AlertContent.vue';
 //https://todolist-api.hexschool.io/users/
 const inputState = ref({
     email:{
