@@ -2,30 +2,31 @@
 import { computed, ref } from 'vue';
 import TodoListTitle from '../components/TodoList-Title.vue';
 import TitleImage from '../components/TitleImage.vue'
-import AlertContent from '../components/AlertContent.vue';
 import { useRoute } from 'vue-router';
 const currentRoute = useRoute();
-
-const emailAlert = ref(false)
-
-const passWordAlert = ref(false)
-
 const isDisabled = ref(false)
-
-const userInput = ref({
-    "email": "",
-    "password": ""
+const inputState = ref({
+    email:{
+        content:'',
+        alert:'',
+        isAlert:false,
+        state:false,
+    },
+    password:{
+        content:'',
+        alert:'',
+        isAlert:false,
+        state:false,
+    }
 })
 
+
 async function login(){
-    if(userInput.value.email === '') emailAlert.value = true
-    if(userInput.value.password === '') passWordAlert.value = true
-    if ((userInput.value.email === '') || (userInput.value.password === '')) return
     try {
-        
+       
         let user = {
-            "email":userInput.value.email ,
-            "password":userInput.value.password
+            "email":inputState.value.email.content ,
+            "password":inputState.value.password.content
         }
         let response = await fetch('https://todolist-api.hexschool.io/users/sign_in',{
             body:JSON.stringify(user),
@@ -40,8 +41,8 @@ async function login(){
             const errorMessage = await response.json();
             console.log('錯誤資訊',errorMessage)
         }
-        console.log('正確資訊',response)
         let data = await response.json()
+        console.log('正確資訊',data)
         console.log(data.token)
     } catch (error) {
         
@@ -51,16 +52,28 @@ async function login(){
    
 }
 
+function verify(){
+    Object.keys(inputState.value).forEach(function(item){
+        if(inputState.value[item].content === ''){
+            inputState.value[item].isAlert = true;
+            inputState.value[item].alert = '欄位不可以為空';
+        }else{
+            inputState.value[item].state = true;
+            inputState.value[item].isAlert = false;
+            inputState.value[item].alert = '';
+        }
+    })
+    
+    //判斷 每個的.state狀態都為 true 回傳 true ，否則都為 false
+    return Object.values(inputState.value).every((item)=> item.state)
+}
+
 </script>
 
 <template>
 
     <div class="login-container  pt-5 d-md-flex justify-content-md-around">
         <div>
-            <!-- <h1 class="tolist-title fs-32 fw-bold text-center fm-Baloo-Thambi"><p class="title-check"></p>ONLINE TODO LIST</h1> -->
-            <!-- <div class=" d-none d-md-block">
-                <img  src="../assets/img/ff8dca85661a71240c169adaabe22733.png">
-            </div> -->
 
             <TodoListTitle  :fontSize="32"  :checkWidth="40" :checkHeight="40"/>
             <TitleImage :width="386" :height="386"></TitleImage>
@@ -70,22 +83,21 @@ async function login(){
             <h2 class="fs-20 fw-bold text-center mt-3 mb-32 mt-md-60">最實用的線上代辦事項服務</h2>
 
             <form class="d-flex flex-column justify-content-center align-items-start">
+
                 <div class="d-flex flex-column w-100">
-                    <label>Email</label>
-                    <input type="text" placeholder="請輸入Email" v-model="userInput.email">
-                    <AlertContent :isEmail="emailAlert"/>
-                    <!-- <p>欄位不可為空</p> -->
+                    <label class="mb-1">Email</label>
+                    <input type="text" placeholder="請輸入Email" v-model="inputState.email.content">
+                    <p :class="['noActive',{active:inputState.email.isAlert}]">{{inputState.email.alert}}</p>
                 </div>
 
-                <div class="d-flex flex-column w-100 my-3">
-                    <label>Password</label>
-                    <input type="password" placeholder="請輸入密碼" v-model="userInput.password">
-                    <AlertContent :isPassWord="passWordAlert"/>
-                    <!-- <p>欄位不可為空</p> -->
+                <div class="d-flex flex-column w-100 my-4">
+                    <label class="mb-1">Password</label>
+                    <input type="password" placeholder="請輸入密碼" v-model="inputState.password.content">
+                    <p :class="['noActive',{active:inputState.password.isAlert}]">{{inputState.password.alert}}</p>
                 </div>
 
 
-                <button class="align-self-center py-12 px-5 bg-dark text-white" :disabled="isDisabled" @click.prevent="login" >登入</button>
+                <button class="align-self-center py-12 px-5 bg-dark text-white" :disabled="isDisabled" @click.prevent="verify()? login() : null" >登入</button>
                 <router-link to="register" class="fw-bold text-dark align-self-center mt-4 text-decoration-none">註冊帳號</router-link>
             </form>
 
@@ -97,30 +109,14 @@ async function login(){
 </template>
 
 <style lang="scss" scoped>
-// .tolist-title{
-//     display: flex;
-//     justify-content: center;
-// }
-// .title-check{
-//     position: relative;
-//     margin-right: 4px;
-//     width:40px;
-//     height: 40px;
-//     border: 2px solid black;
-//     transform: rotate(-9.39deg);
-// }
-// .title-check::before{
-//     content: '';
-//     position: absolute;
-//     height: 100%;
-//     width: 50%;
-//     border-right: 8px solid black;
-//     border-bottom: 8px solid black;
-//     top:-15%;
-//     left:50%;
-//     transform: rotate(45deg);
-//     // background-color: black;
-// }
+.noActive{
+    display: none;
+}
+.active{
+    margin: 0px;
+    display: block;
+    color:red;
+}
 
 form{
     input{
@@ -140,10 +136,5 @@ label{
     font-size: 14px;
     font-weight: bold;
 }
-// img{
-//     width: 386px;
-//     height: 100%;
-//     // height: 448px;
-// }
 
 </style>

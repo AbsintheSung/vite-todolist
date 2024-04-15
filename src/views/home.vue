@@ -1,9 +1,9 @@
 <script setup>
-// https://todolist-api.hexschool.io/doc/
 import { ref , computed,onBeforeMount,onMounted} from 'vue';
 import TodoListTitle from '../components/TodoList-Title.vue';
 import ListItem from '../components/listItem.vue'
-import { useRoute } from 'vue-router';
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 const userInput = ref('')
 const token = ""
 
@@ -35,6 +35,30 @@ onBeforeMount(async ()=>{
         
     }
 })
+
+const handleFilter = (state)=>{ buttonState.value = state }
+const dataFilter = computed(()=>{
+    
+    if(buttonState.value==='all'){
+        return data.value
+    }
+    if(buttonState.value==='pending'){
+        return  data.value.filter((item)=>{ if(!item.status){ return item} } )
+    }
+    if(buttonState.value==='finish'){
+        return data.value.filter((item)=>{ if(item.status){ return item} } )
+    }
+})
+const noFinishItem = computed(()=>{
+    let noFinish = data.value.filter((item)=>{ if(!item.status){ return item} } )
+    return noFinish.length
+})
+
+const dataShow = computed(()=>{
+    if(data.value.length === 0 ) return true
+    else return false
+})
+
 async function getData() {
     try {
         let response = await fetch('https://todolist-api.hexschool.io/todos/',
@@ -62,30 +86,6 @@ async function getData() {
    
 };
 
-
-const handleFilter = (state)=>{ buttonState.value = state }
-const dataFilter = computed(()=>{
-    
-    if(buttonState.value==='all'){
-        return data.value
-    }
-    if(buttonState.value==='pending'){
-        return  data.value.filter((item)=>{ if(!item.status){ return item} } )
-    }
-    if(buttonState.value==='finish'){
-        return data.value.filter((item)=>{ if(item.status){ return item} } )
-    }
-})
-const noFinishItem = computed(()=>{
-    let noFinish = data.value.filter((item)=>{ if(!item.status){ return item} } )
-    return noFinish.length
-})
-
-const dataShow = computed(()=>{
-    if(data.value.length === 0 ) return true
-    else return false
-})
-
 //新增 代辦事項
 async function setData(){
     try {
@@ -111,6 +111,15 @@ async function setData(){
         if(responseData.status){
             // data.value.push(responseData.newTodo)
             getData();
+            userInput.value = ''
+            toast("新增成功", {
+                "theme": "auto",
+                "type": "success",
+                "position": "top-center",
+                "autoClose": 100,
+                "hideProgressBar": true,
+                "dangerouslyHTMLString": true
+            })
         }
     } catch (error) {
         
@@ -217,11 +226,12 @@ function handleEditoff(editData){
     data.value[dataIndex].edit = false
 }
 
+
 </script>
 
 
 <template>
- 
+
     <div class="home-container">
         <header>
             <TodoListTitle />
@@ -236,6 +246,7 @@ function handleEditoff(editData){
             <h3 class="text-center">目前尚無代辦事項</h3>
             <img class="img-nolist" src="../assets/img/8911ab6dcbda98df56e26aa23c6643ac.png">
         </div>
+
         <div class="list-box" v-else>
 
             <div class="filter-btnbox">
