@@ -7,6 +7,12 @@ import "vue3-toastify/dist/index.css";
 const userInput = ref('')
 const token = ""
 
+const notify = (message)=>{
+    toast.success(message,{
+        autoColose:3000,
+        position:toast.POSITION.TOP_CENTER,
+    })
+}
 
 
 const data = ref([])
@@ -14,11 +20,13 @@ const buttonState = ref('all');
 onBeforeMount(async ()=>{
     try {
         let response = await fetch('https://todolist-api.hexschool.io/todos/',
+        
         {
             headers: {
                 'Authorization': `${token}`
             }
         })
+      
         if( !response.ok ){
             let errorMessage = await response.json();
             console.log('錯誤資訊',errorMessage)
@@ -112,14 +120,7 @@ async function setData(){
             // data.value.push(responseData.newTodo)
             getData();
             userInput.value = ''
-            toast("新增成功", {
-                "theme": "auto",
-                "type": "success",
-                "position": "top-center",
-                "autoClose": 100,
-                "hideProgressBar": true,
-                "dangerouslyHTMLString": true
-            })
+          
         }
     } catch (error) {
         
