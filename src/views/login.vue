@@ -2,8 +2,11 @@
 import { computed, ref } from 'vue';
 import TodoListTitle from '../components/TodoList-Title.vue';
 import TitleImage from '../components/TitleImage.vue'
-import { useRoute } from 'vue-router';
-const currentRoute = useRoute();
+import { useRoute ,useRouter} from 'vue-router' ;
+import {  loginAPI  } from "../api/login"
+
+
+const router = useRouter();
 const isDisabled = ref(false)
 const inputState = ref({
     email:{
@@ -19,37 +22,28 @@ const inputState = ref({
         state:false,
     }
 })
-
-
+// let token  = document.cookie.replace(
+//             /(?:(?:^|.*;\s*)TokenCode\s*\=\s*([^;]*).*$)|^.*$/, "$1"
+//         );
+// console.log('我是login畫面',token)
 async function login(){
-    try {
-       
-        let user = {
-            "email":inputState.value.email.content ,
-            "password":inputState.value.password.content
-        }
-        let response = await fetch('https://todolist-api.hexschool.io/users/sign_in',{
-            body:JSON.stringify(user),
-            cache: "no-cache",
-            headers: {
-                "user-agent": "Mozilla/4.0 MDN Example",
-                "content-type": "application/json",
-            },
-            method: "POST",
-        })
-        if(!response.ok){
-            const errorMessage = await response.json();
-            console.log('錯誤資訊',errorMessage)
-        }
-        let data = await response.json()
-        console.log('正確資訊',data)
-        console.log(data.token)
-    } catch (error) {
-        
-    }finally{
-
+    let user = {
+        "email":inputState.value.email.content ,
+        "password":inputState.value.password.content
     }
-   
+    try {
+        const data = await loginAPI('https://todolist-api.hexschool.io/users/sign_in', 'POST', user);
+        // console.log('正確資訊', data);
+        // console.log(data.token);
+        if(data.status){
+            document.cookie=`TokenCode=${data.token}`
+            router.push('/home')
+        }
+    } catch (error) {
+        console.error(error)
+    }
+       
+       
 }
 
 function verify(){

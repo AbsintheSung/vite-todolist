@@ -1,11 +1,17 @@
 <script setup>
 import { ref , computed,onBeforeMount,onMounted} from 'vue';
+import { useRoute ,useRouter} from 'vue-router' ;
+import { fetchAPI } from '../api/fetchAPI';
+import { loginOutAPI } from '../api/loginout';
 import TodoListTitle from '../components/TodoList-Title.vue';
 import ListItem from '../components/listItem.vue'
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+
+const router = useRouter()
+
 const userInput = ref('')
-const token = ""
+let token  = document.cookie.replace(/(?:(?:^|.*;\s*)TokenCode\s*\=\s*([^;]*).*$)|^.*$/, "$1");
 
 const notify = (message)=>{
     toast.success(message,{
@@ -17,31 +23,18 @@ const notify = (message)=>{
 
 const data = ref([])
 const buttonState = ref('all');
+
 onBeforeMount(async ()=>{
     try {
-        let response = await fetch('https://todolist-api.hexschool.io/todos/',
-        
-        {
-            headers: {
-                'Authorization': `${token}`
-            }
-        })
-      
-        if( !response.ok ){
-            let errorMessage = await response.json();
-            console.log('錯誤資訊',errorMessage)
-            // throw new Error(errorMessage)
-        }
-        
-        const responseData = await response.json();
+        const responseData = await fetchAPI('https://todolist-api.hexschool.io/todos/','GET',token)
         responseData.data.forEach((item)=>{
             item.edit = false
             data.value.push(item)
         })
-        // console.log(data.value)
     } catch (error) {
-        
+        console.error(error)
     }
+  
 })
 
 const handleFilter = (state)=>{ buttonState.value = state }
@@ -69,150 +62,88 @@ const dataShow = computed(()=>{
 
 async function getData() {
     try {
-        let response = await fetch('https://todolist-api.hexschool.io/todos/',
-        {
-            headers: {
-                'Authorization': `${token}`
-            }
-        })
-        if( !response.ok ){
-            let errorMessage = await response.json();
-            console.log('錯誤資訊',errorMessage)
-            // throw new Error(errorMessage)
-        }
-        
-        const responseData = await response.json();
+        const responseData = await fetchAPI('https://todolist-api.hexschool.io/todos/','GET',token)
         data.value = []
         responseData.data.forEach((item)=>{
             item.edit = false
             data.value.push(item)
         })
-        // console.log(data.value)
     } catch (error) {
-        
+        console.error(error)
     }
-   
 };
 
 //新增 代辦事項
 async function setData(){
+    const sendContent = {
+        "content":userInput.value
+    }
     try {
-        const sendContent = {
-            "content":userInput.value
-        }
-        const response = await fetch('https://todolist-api.hexschool.io/todos/',{
-            cache: "no-cache",
-            body:JSON.stringify(sendContent),
-            headers: {
-                "content-type": "application/json",
-                'Authorization': `${token}`
-            },
-            method: "POST"
-        })
-        if( !response.ok ){
-            let errorMessage = await response.json();
-            console.log('錯誤資訊',errorMessage)
-            // throw new Error(errorMessage)
-        }
-        const responseData = await response.json()
-        console.log(responseData)
-        if(responseData.status){
-            // data.value.push(responseData.newTodo)
+        const response = await fetchAPI('https://todolist-api.hexschool.io/todos/','POST',token,sendContent)
+        // console.log('response',response)
+        if(response.status){
             getData();
             userInput.value = ''
-          
         }
     } catch (error) {
-        
+        console.error(error)
     }
 }
 
 //狀態完成 或 未完成切換
 async function handleComplete(itemData){
     try {
-        let id = itemData.id
-        let response = await fetch(`https://todolist-api.hexschool.io/todos/${id}/toggle`,{
-            cache: "no-cache",
-            headers: {
-                "content-type": "application/json",
-                'Authorization': `${token}`
-            },
-            method: "PATCH",}
-        )
-        if( !response.ok ){
-            let errorMessage = await response.json();
-            console.log('錯誤資訊',errorMessage)
-            // throw new Error(errorMessage)
-        }
-            
-        const responseData = await response.json();
-        console.log(responseData)
-        if(responseData.status){
+        const id = itemData.id
+        const response = await fetchAPI(`https://todolist-api.hexschool.io/todos/${id}/toggle`,"PATCH",token)
+        if(response.status){
             getData()
-            // const tempId = itemData.id
-            // const dataIndex = data.value.findIndex((item)=>{return item.id === tempId})
-            // data.value[dataIndex].status = !data.value[dataIndex].status
         }
     } catch (error) {
-        
+        console.error('更新狀態失敗',error)
     }
-   
 }
 
 //刪除事項
 async function handleDelete(deleteData){
     // console.log(deleteData)
     try {
-        const response = await fetch(`https://todolist-api.hexschool.io/todos/${deleteData.id}`,{
-            cache: "no-cache",
-            headers: {
-                "content-type": "application/json",
-                'Authorization': `${token}`
-            },
-            method: "DELETE",}
-        )
-        if( !response.ok ){
-            let errorMessage = await response.json();
-            console.log('錯誤資訊',errorMessage)
-            // throw new Error(errorMessage)
-        }
-        const responseData = await response.json();
-        console.log(responseData)
-        if(responseData.status){
+        const id = deleteData.id 
+        const response = await fetchAPI(`https://todolist-api.hexschool.io/todos/${id}`,"DELETE",token)
+        if(response.status){
             getData()
         }
     } catch (error) {
-        
+        console.error('刪除失敗',error)
     }
 }
 
 //修改事項
 async function editToDoList(dataObj,strData){
     try {
-        const sendContent = {
-            content:dataObj.content
+        const id = dataObj.id 
+        const newContent = {
+            content : strData
         }
-        const response = await fetch(`https://todolist-api.hexschool.io/todos/${dataObj.id}`,{
-            cache: "no-cache",
-            body:JSON.stringify({ content : strData }),
-            headers: {
-                "content-type": "application/json",
-                'Authorization': `${token}`
-            },
-            method: "PUT",}
-        )
-        if( !response.ok ){
-            let errorMessage = await response.json();
-            console.log('錯誤資訊',errorMessage)
-            // throw new Error(errorMessage)
-        }
-        const responseData = await response.json();
-        console.log(responseData)
-        if(responseData.status){
+        const response = await fetchAPI(`https://todolist-api.hexschool.io/todos/${id}`,"PUT",token,newContent)
+        if(response.status){
             getData()
         }
     } catch (error) {
-        
+        console.error('修改失敗',error)
+    }
+}
+
+async function loginout(){
+    try {
+        const data = await loginOutAPI('https://todolist-api.hexschool.io/users/sign_out', 'POST',token);
+        // console.log('正確資訊', data);
+        // console.log(data.token);
+        if(data.status){
+            document.cookie = `TokenCode=${token}; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+            router.push('/')
+        }
+    } catch (error) {
+        console.error(error)
     }
 }
 
@@ -236,7 +167,7 @@ function handleEditoff(editData){
     <div class="home-container">
         <header>
             <TodoListTitle />
-            <router-link style="color: red;" to="login">登出</router-link>
+            <a class="login-out" @click="loginout">登出</a>
         </header>
         
         <div class="input-box">
@@ -277,7 +208,14 @@ function handleEditoff(editData){
 
 
 <style lang="scss" scoped>
-
+.login-out{
+    color:black;
+    text-decoration: none;
+}
+.login-out:hover{
+    cursor: pointer;
+    color:red;
+}
 .buttonActive{
     border-bottom: 2px solid black !important;
 }

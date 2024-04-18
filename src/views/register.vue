@@ -2,7 +2,13 @@
 import { ref } from 'vue';
 import TodoListTitle from '../components/TodoList-Title.vue';
 import TitleImage from '../components/TitleImage.vue';
+import { registerAPI } from '../api/register';
+import { useRoute ,useRouter} from 'vue-router' ;
+
 //https://todolist-api.hexschool.io/users/
+
+const router = useRouter();
+
 const inputState = ref({
     email:{
         content:'',
@@ -29,13 +35,7 @@ const inputState = ref({
         state:false,
     }
 })
-const userInput = ref({
-    email:"",
-    nickname:"",
-    password:"",
-    doublePassWord:'',
-    isSend:false,
-})
+
 
 async function registerAccount(){
     let user={
@@ -44,28 +44,14 @@ async function registerAccount(){
         "password":inputState.value.password.content
     }
     try {
-        let data = await fetch('https://todolist-api.hexschool.io/users/sign_up',{
-            body:JSON.stringify(user),
-            cache: "no-cache",
-            headers: {
-                "user-agent": "Mozilla/4.0 MDN Example",
-                "content-type": "application/json",
-            },
-            method: "POST",
-           
-        })
-        if( !data.ok ){
-            const errorData = await data.json();
-            console.log('錯誤資訊',errorData)
-            // throw new Error(JSON.stringify(errorData))
+        const data = await registerAPI('https://todolist-api.hexschool.io/users/sign_up', 'POST', user);
+        // console.log('正確資訊', data);
+        if(data.status){
+            router.push('/')
         }
-        const dataJson = await data.json(); 
-        console.log('正確資訊',dataJson)
-
     } catch (error) {
-
+        console.error('登入過程中發生錯誤', error);
     }
-   
 }
 
 
@@ -137,7 +123,7 @@ function verify(){
 
 
                 <button class="align-self-center py-12 px-5 bg-dark text-white" @click.prevent="verify()? registerAccount():null">註冊帳號</button>
-                <router-link to="login" class="fw-bold text-dark align-self-center mt-4 text-decoration-none">登入</router-link>
+                <router-link to="/" class="fw-bold text-dark align-self-center mt-4 text-decoration-none">登入</router-link>
             </form>
 
         </div>
