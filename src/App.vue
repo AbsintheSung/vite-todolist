@@ -11,7 +11,7 @@ import 'vue3-toastify/dist/index.css';
 
 <template>
   
-    <div class="container-fluid bgtest  px-0 ">
+    <div class="container-fluid bgtest  px-0 py-4">
         <router-view></router-view>
     </div>
   
