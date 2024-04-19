@@ -11,6 +11,7 @@ const props = defineProps({
     },
 })
 
+editContent.value = props.sendData.content;
 
 const emit = defineEmits({
     changeComplete:(data)=>{
@@ -54,12 +55,9 @@ function sendEditOff(){
     emit('editOffItem', props.sendData)
 }
 function sendEditItem(){
-    emit('editHandle',props.sendData, editContent.value  )
-    
+    emit('editHandle',props.sendData, editContent.value  )    
 }
-function userInput($event){
-    editContent.value = $event.target.value
-}
+
 
 
 </script>
@@ -69,7 +67,7 @@ function userInput($event){
 
     <li>
         <div class="edit-box" v-if="props.sendData.edit">
-            <input class="edit-input" type="text" :value="props.sendData.content" @input="userInput" @keyup.enter="sendEditItem">
+            <input class="edit-input" type="text" v-model="editContent" @keyup.enter="sendEditItem">
             <button class="edit-addbtn" @click="sendEditItem"><span class="material-icons-outlined">add</span></button>
         </div>
         <div v-else @click="sendComplete">
@@ -130,9 +128,15 @@ li{
 .delete-link,.edit-link,.edit-off-link{
     display: flex;
     text-decoration-line: none;
+    border-radius: 8px;
+    background-color: #FFD370;
+    border: none;
     >span{
         color:black;
     }
+}
+.edit-link,.edit-off-link{
+    margin-right: 8px;
 }
 .edit-box{
     position: relative;

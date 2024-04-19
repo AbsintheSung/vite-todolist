@@ -4,11 +4,12 @@ import TodoListTitle from '../components/TodoList-Title.vue';
 import TitleImage from '../components/TitleImage.vue';
 import { registerAPI } from '../api/register';
 import { useRoute ,useRouter} from 'vue-router' ;
+import {  toastWaitMessage,updateToastMessage,updateToastMessage_Error} from '../js/toast'
 
 //https://todolist-api.hexschool.io/users/
 
 const router = useRouter();
-
+const isDisabled = ref(false)
 const inputState = ref({
     email:{
         content:'',
@@ -44,13 +45,19 @@ async function registerAccount(){
         "password":inputState.value.password.content
     }
     try {
+        isDisabled.value = true
+        toastWaitMessage('註冊中')
         const data = await registerAPI('https://todolist-api.hexschool.io/users/sign_up', 'POST', user);
         // console.log('正確資訊', data);
         if(data.status){
+            updateToastMessage('註冊成功')
             router.push('/')
         }
     } catch (error) {
-        console.error('登入過程中發生錯誤', error);
+        updateToastMessage_Error(error)
+        // console.error('登入過程中發生錯誤', error);
+    }finally{
+        isDisabled.value = false
     }
 }
 
@@ -122,7 +129,7 @@ function verify(){
                 </div>
 
 
-                <button class="align-self-center py-12 px-5 bg-dark text-white" @click.prevent="verify()? registerAccount():null">註冊帳號</button>
+                <button class="align-self-center py-12 px-5 bg-dark text-white" :disabled="isDisabled" @click.prevent="verify()? registerAccount():null">註冊帳號</button>
                 <router-link to="/" class="fw-bold text-dark align-self-center mt-4 text-decoration-none">登入</router-link>
             </form>
 
