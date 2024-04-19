@@ -16,7 +16,7 @@ export async function loginAPI(url, method, body = null) {
 
         if (!response.ok) {
             let errorMessage = await response.json();
-            console.log('登入錯誤資訊', errorMessage);
+            // console.log('登入錯誤資訊', errorMessage);
             throw new Error(errorMessage.message);
         }
         return await response.json();

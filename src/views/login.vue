@@ -5,9 +5,14 @@ import TitleImage from '../components/TitleImage.vue'
 import { useRoute ,useRouter} from 'vue-router' ;
 import {  loginAPI  } from "../api/login"
 
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
+
+
 
 const router = useRouter();
 const isDisabled = ref(false)
+const toastId = ref('');
 const inputState = ref({
     email:{
         content:'',
@@ -22,30 +27,32 @@ const inputState = ref({
         state:false,
     }
 })
-// let token  = document.cookie.replace(
-//             /(?:(?:^|.*;\s*)TokenCode\s*\=\s*([^;]*).*$)|^.*$/, "$1"
-//         );
-// console.log('我是login畫面',token)
+
 async function login(){
     let user = {
         "email":inputState.value.email.content ,
         "password":inputState.value.password.content
     }
     try {
+        toastLoginMessage()
+        isDisabled.value = true
         const data = await loginAPI('https://todolist-api.hexschool.io/users/sign_in', 'POST', user);
-        // console.log('正確資訊', data);
+        console.log('正確資訊', data);
         // console.log(data.token);
+
         if(data.status){
+            updateToastMessage()
             document.cookie=`TokenCode=${data.token}`
             router.push('/home')
         }
     } catch (error) {
-        console.error(error)
+        updateToastMessage_Error(error)
+    }finally{
+        isDisabled.value = false
     }
-       
-       
 }
 
+//簡易使用者輸入 防擋機制
 function verify(){
     Object.keys(inputState.value).forEach(function(item){
         if(inputState.value[item].content === ''){
@@ -56,10 +63,50 @@ function verify(){
             inputState.value[item].isAlert = false;
             inputState.value[item].alert = '';
         }
-    })
-    
+    })   
     //判斷 每個的.state狀態都為 true 回傳 true ，否則都為 false
     return Object.values(inputState.value).every((item)=> item.state)
+}
+
+
+//toast套件 設定
+
+//使用者點擊 登入時顯示(loading狀態)
+function toastLoginMessage(){
+    toastId.value = toast(`登入中`, {
+        // toastId: toastId.value,
+        theme: "dark",
+        position: "top-center",
+        autoClose: false,
+        hideProgressBar: true,
+        dangerouslyHTMLString: true,
+        isLoading: true,
+        transition: "slide",
+    })
+}
+
+//成功時 更新 toast內容，並設置500毫秒關閉
+function updateToastMessage(){
+    toast.update(toastId.value, {
+        render: (props) => {
+            return '登入成功';
+        },
+        type: toast.TYPE.SUCCESS,
+        isLoading: false,
+        autoClose:500,
+    });
+}
+
+//失敗時 更新 toast內容，並設置500毫秒關閉
+function updateToastMessage_Error(message){
+    toast.update(toastId.value, {
+        render: (props) => {
+            return `${message}`;
+        },
+        type: toast.TYPE.ERROR,
+        isLoading: false,
+        autoClose:500,
+    });
 }
 
 </script>
