@@ -17,7 +17,7 @@ const isRequest = ref(true); //在每個請求前 設置一個判斷 ，等另�
 
 onBeforeMount(async ()=>{
     if(!isRequest) return 
-    toastWaitMessage('資料讀取中')
+    updateToastMessage('資料讀取中')
     try {
         const responseData = await fetchAPI('https://todolist-api.hexschool.io/todos/','GET',token)
         isRequest.value = false
