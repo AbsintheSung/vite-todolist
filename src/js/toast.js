@@ -26,7 +26,7 @@ export function updateToastMessage(message){
         },
         type: toast.TYPE.SUCCESS,
         isLoading: false,
-        autoClose:500,
+        autoClose:800,
     });
 }
 
@@ -38,7 +38,7 @@ export function updateToastMessage_Error(message){
         },
         type: toast.TYPE.ERROR,
         isLoading: false,
-        autoClose:500,
+        autoClose:800,
     });
 }
 
