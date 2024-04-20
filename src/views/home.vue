@@ -1,11 +1,12 @@
 <script setup>
-import { ref , computed,onBeforeMount,onMounted} from 'vue';
+import { ref , computed,onBeforeMount,onMounted, watch} from 'vue';
 import { useRoute ,useRouter} from 'vue-router' ;
 import { fetchAPI } from '../api/fetchAPI';
 import { loginOutAPI } from '../api/loginout';
 import TodoListTitle from '../components/TodoList-Title.vue';
 import ListItem from '../components/listItem.vue'
 import {  toastWaitMessage,updateToastMessage,updateToastMessage_Error} from '../js/toast'
+import { throttle } from '../js/throttle'
 
 const router = useRouter()
 const userInput = ref('')
@@ -14,6 +15,7 @@ const data = ref([])
 const buttonState = ref('all');
 const nickName = ref('')
 const isRequest = ref(true); //在每個請求前 設置一個判斷 ，等另一個請求結束，我們才能發送其他請求
+
 
 onBeforeMount(async ()=>{
     if(!isRequest) return 
@@ -56,6 +58,17 @@ const dataShow = computed(()=>{
     if(data.value.length === 0 ) return true
     else return false
 })
+
+function handleEdit(editData){
+    const dataIndex = data.value.findIndex((item)=>{return item.id === editData.id})
+    data.value.forEach((item)=>item.edit = false)
+    data.value[dataIndex].edit = !data.value[dataIndex].edit
+}
+function handleEditoff(editData){
+    const dataIndex = data.value.findIndex((item)=>{return item.id === editData.id})
+    data.value[dataIndex].edit = false
+}
+
 
 //檢查token，並獲取暱稱
 async function checkToken(){
@@ -128,6 +141,8 @@ async function handleComplete(itemData){
     }
 }
 
+
+
 //刪除事項
 async function handleDelete(deleteData){
     // console.log(deleteData)
@@ -190,16 +205,14 @@ async function loginout(){
     }
 }
 
+// 避免使用者 在 新增 刪除 修改狀態下 瘋狂 發送 api 事件，也可以讓toast訊息不會這麼頻繁觸發
+const throttle_setData = throttle(setData,1000)
+const throttle_handleComplete = throttle(handleComplete,1000)
+const throttle_handleDelete = throttle(handleDelete,1000)
+const throttle_handleEdit = throttle(handleEdit,1000)
+ 
 
-function handleEdit(editData){
-    const dataIndex = data.value.findIndex((item)=>{return item.id === editData.id})
-    data.value.forEach((item)=>item.edit = false)
-    data.value[dataIndex].edit = !data.value[dataIndex].edit
-}
-function handleEditoff(editData){
-    const dataIndex = data.value.findIndex((item)=>{return item.id === editData.id})
-    data.value[dataIndex].edit = false
-}
+
 
 
 </script>
@@ -215,8 +228,8 @@ function handleEditoff(editData){
         </header>
         
         <div class="input-box">
-            <input type="text" v-model="userInput" @keyup.enter="setData">
-            <button class="addinput" @click="setData"><span class="material-icons-outlined">add</span></button>
+            <input type="text" v-model="userInput" @keyup.enter="throttle_setData">
+            <button class="addinput" @click="throttle_setData"><span class="material-icons-outlined">add</span></button>
         </div>
         <div v-if="dataShow">
             <h3 class="text-center">目前尚無代辦事項</h3>
@@ -224,7 +237,6 @@ function handleEditoff(editData){
         </div>
 
         <div class="list-box" v-else>
-
             <div class="filter-btnbox">
                 <button :class="[{buttonActive : buttonState === 'all' }]" @click="handleFilter('all')">全部</button>
                 <button :class="[{buttonActive : buttonState === 'pending' }]" @click="handleFilter('pending')">待完成</button>
@@ -233,7 +245,13 @@ function handleEditoff(editData){
             
             <ul class="todo-list">
 
-                <ListItem v-for="item in dataFilter" :key="item.id" :sendData="item" @changeComplete="handleComplete" @deleteItem="handleDelete" @editItem="handleEdit" @editOffItem="handleEditoff" @editHandle='editToDoList'></ListItem>
+                <ListItem v-for="item in dataFilter" :key="item.id" :sendData="item" 
+                    @changeComplete="throttle_handleComplete" 
+                    @deleteItem="throttle_handleDelete" 
+                    @editItem="throttle_handleEdit" 
+                    @editOffItem="handleEditoff" 
+                    @editHandle='editToDoList'>
+                </ListItem>
 
             </ul>
 

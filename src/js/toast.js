@@ -14,7 +14,6 @@ export  function toastWaitMessage(message){
         hideProgressBar: true,
         dangerouslyHTMLString: true,
         isLoading: true,
-        transition: "slide",
     })
 }
 
@@ -26,7 +25,7 @@ export function updateToastMessage(message){
         },
         type: toast.TYPE.SUCCESS,
         isLoading: false,
-        autoClose:800,
+        autoClose:500,
     });
 }
 
@@ -38,7 +37,7 @@ export function updateToastMessage_Error(message){
         },
         type: toast.TYPE.ERROR,
         isLoading: false,
-        autoClose:800,
+        autoClose:500,
     });
 }
 
