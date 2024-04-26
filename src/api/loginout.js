@@ -17,7 +17,7 @@ export async function loginOutAPI(url, method,token, body = null) {
 
         if (!response.ok) {
             let errorMessage = await response.json();
-            console.log('登出錯誤資訊', errorMessage);
+            // console.log('登出錯誤資訊', errorMessage);
             throw new Error(errorMessage.message);
         }
         return await response.json();
