@@ -24,6 +24,8 @@ onBeforeMount(async ()=>{
         const responseData = await fetchAPI('https://todolist-api.hexschool.io/todos/','GET',token)
         isRequest.value = false
         updateToastMessage('讀取成功')
+
+        //針對取得後資料，添加 edit 屬性，主要目的是為了 ，使用者 去點擊A項目的編輯 開啟編輯後沒有編輯，反而再去點擊B項目的編輯時候 ，開啟B項目編輯，此時會關閉A項目的編輯
         responseData.data.forEach((item)=>{
             item.edit = false
             data.value.push(item)
@@ -36,7 +38,10 @@ onBeforeMount(async ()=>{
   
 })
 
+//點擊後 修改 buttonState.value 和 顯示樣式
 const handleFilter = (state)=>{ buttonState.value = state }
+
+//資料篩選 ，透過 buttonState 是什麼 ，來將 data 內的資料作過濾篩選
 const dataFilter = computed(()=>{
     
     if(buttonState.value==='all'){
@@ -49,21 +54,28 @@ const dataFilter = computed(()=>{
         return data.value.filter((item)=>{ if(item.status){ return item} } )
     }
 })
+
+//顯示目前 待完成的數量
 const noFinishItem = computed(()=>{
     let noFinish = data.value.filter((item)=>{ if(!item.status){ return item} } )
     return noFinish.length
 })
 
+//data 沒有資料的時候 顯示
 const dataShow = computed(()=>{
     if(data.value.length === 0 ) return true
     else return false
 })
 
+
+//點擊編輯按鈕， 改變該項目的 edit 屬性 來達到 切換 input功能( 開啟 )
 function handleEdit(editData){
     const dataIndex = data.value.findIndex((item)=>{return item.id === editData.id})
     data.value.forEach((item)=>item.edit = false)
     data.value[dataIndex].edit = !data.value[dataIndex].edit
 }
+
+//點擊編輯按鈕， 改變該項目的 edit 屬性 來達到 切換 input功能( 關閉 )
 function handleEditoff(editData){
     const dataIndex = data.value.findIndex((item)=>{return item.id === editData.id})
     data.value[dataIndex].edit = false
@@ -81,12 +93,15 @@ async function checkToken(){
 }
 checkToken()
 
+//獲取資料
 async function getData() {
     if( !isRequest ) return 
     try {
         const responseData = await fetchAPI('https://todolist-api.hexschool.io/todos/','GET',token)
         isRequest.value = false
         data.value = []
+        
+        //針對取得後資料，添加 edit 屬性，主要目的是為了 ，使用者 去點擊A項目的編輯 開啟編輯後沒有編輯，反而再去點擊B項目的編輯時候 ，開啟B項目編輯，此時會關閉A項目的編輯
         responseData.data.forEach((item)=>{
             item.edit = false
             data.value.push(item)

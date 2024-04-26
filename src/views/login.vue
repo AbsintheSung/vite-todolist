@@ -71,45 +71,6 @@ function verify(){
 }
 
 
-//toast套件 設定
-
-// //使用者點擊 登入時顯示(loading狀態)
-// function toastLoginMessage(){
-//     toastId.value = toast(`登入中`, {
-//         // toastId: toastId.value,
-//         theme: "dark",
-//         position: "top-center",
-//         autoClose: false,
-//         hideProgressBar: true,
-//         dangerouslyHTMLString: true,
-//         isLoading: true,
-//         transition: "slide",
-//     })
-// }
-
-// //成功時 更新 toast內容，並設置500毫秒關閉
-// function updateToastMessage(){
-//     toast.update(toastId.value, {
-//         render: (props) => {
-//             return '登入成功';
-//         },
-//         type: toast.TYPE.SUCCESS,
-//         isLoading: false,
-//         autoClose:500,
-//     });
-// }
-
-// //失敗時 更新 toast內容，並設置500毫秒關閉
-// function updateToastMessage_Error(message){
-//     toast.update(toastId.value, {
-//         render: (props) => {
-//             return `${message}`;
-//         },
-//         type: toast.TYPE.ERROR,
-//         isLoading: false,
-//         autoClose:500,
-//     });
-// }
 
 </script>
 
