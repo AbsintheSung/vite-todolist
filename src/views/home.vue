@@ -5,7 +5,7 @@ import { fetchAPI } from '../api/fetchAPI';
 import { loginOutAPI } from '../api/loginout';
 import TodoListTitle from '../components/TodoList-Title.vue';
 import ListItem from '../components/listItem.vue'
-import {  toastWaitMessage,updateToastMessage,updateToastMessage_Error} from '../js/toast'
+import {  toastWaitMessage,updateToastMessage,updateToastMessage_Error,removeToast} from '../js/toast'
 import { throttle } from '../js/throttle'
 
 const router = useRouter()
@@ -23,6 +23,7 @@ onBeforeMount( async ()=>{
 
 // 在onMounted  獲取資料
 onMounted(async ()=>{
+    removeToast()
     await getData()
 })
 

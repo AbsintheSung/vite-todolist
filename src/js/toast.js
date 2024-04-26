@@ -41,3 +41,7 @@ export function updateToastMessage_Error(message){
     });
 }
 
+export function removeToast(){
+    toast.remove(toastId.value);
+}
+
