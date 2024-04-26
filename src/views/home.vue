@@ -16,10 +16,13 @@ const buttonState = ref('all');
 const nickName = ref('')
 const isRequest = ref(true); //在每個請求前 設置一個判斷 ，等另一個請求結束，我們才能發送其他請求
 
-//在  onBeforeMount 時候 檢查 Token ， 並獲取資料
+//在  onBeforeMount 時候 檢查 Token
 onBeforeMount( async ()=>{
     await checkToken()
+} )
 
+// 在onMounted  獲取資料
+onMounted(async ()=>{
     if(!isRequest) return 
     updateToastMessage('資料讀取中')
     try {
@@ -37,9 +40,7 @@ onBeforeMount( async ()=>{
     }finally{
         isRequest.value = true
     }
-} )
-
-
+})
 
 //點擊後 修改 buttonState.value 和 顯示樣式
 const handleFilter = (state)=>{ buttonState.value = state }
