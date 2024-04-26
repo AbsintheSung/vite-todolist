@@ -23,23 +23,7 @@ onBeforeMount( async ()=>{
 
 // 在onMounted  獲取資料
 onMounted(async ()=>{
-    if(!isRequest) return 
-    updateToastMessage('資料讀取中')
-    try {
-        const responseData = await fetchAPI('https://todolist-api.hexschool.io/todos/','GET',token)
-        isRequest.value = false
-        updateToastMessage('讀取成功')
-
-        //針對取得後資料，添加 edit 屬性，主要目的是為了 ，使用者 去點擊A項目的編輯 開啟編輯後沒有編輯，反而再去點擊B項目的編輯時候 ，開啟B項目編輯，此時會關閉A項目的編輯
-        responseData.data.forEach((item)=>{
-            item.edit = false
-            data.value.push(item)
-        })
-    } catch (error) {
-        updateToastMessage_Error(error)
-    }finally{
-        isRequest.value = true
-    }
+    await getData()
 })
 
 //點擊後 修改 buttonState.value 和 顯示樣式
