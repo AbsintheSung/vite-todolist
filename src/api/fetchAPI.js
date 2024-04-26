@@ -17,7 +17,7 @@ export async function fetchAPI(url, method, token , body = null) {
 
         if (!response.ok) {
             let errorMessage = await response.json();
-            console.log('錯誤資訊', errorMessage);
+            // console.log('錯誤資訊', errorMessage);
             throw new Error(errorMessage.message);
         }
         return await response.json();

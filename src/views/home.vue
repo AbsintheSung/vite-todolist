@@ -16,8 +16,10 @@ const buttonState = ref('all');
 const nickName = ref('')
 const isRequest = ref(true); //在每個請求前 設置一個判斷 ，等另一個請求結束，我們才能發送其他請求
 
+//在  onBeforeMount 時候 檢查 Token ， 並獲取資料
+onBeforeMount( async ()=>{
+    await checkToken()
 
-onMounted(async ()=>{
     if(!isRequest) return 
     updateToastMessage('資料讀取中')
     try {
@@ -35,8 +37,9 @@ onMounted(async ()=>{
     }finally{
         isRequest.value = true
     }
-  
-})
+} )
+
+
 
 //點擊後 修改 buttonState.value 和 顯示樣式
 const handleFilter = (state)=>{ buttonState.value = state }
@@ -82,16 +85,16 @@ function handleEditoff(editData){
 }
 
 
-//檢查token，並獲取暱稱
+//檢查 TOKEN ，並獲取暱稱 。 TOKEN 若不存在跳轉到登入畫面，避免有人用網址輸入
 async function checkToken(){
     try {
         const responseData = await fetchAPI('https://todolist-api.hexschool.io/users/checkout','GET',token)
         if(responseData.status) nickName.value = responseData.nickname
     } catch (error) {
-        // console.error(error)
+        router.push('/')
     }
 }
-checkToken()
+
 
 //獲取資料
 async function getData() {
@@ -229,7 +232,6 @@ const throttle_handleEdit = throttle(editToDoList,1000)
 
 
 
-
 </script>
 
 
@@ -273,7 +275,9 @@ const throttle_handleEdit = throttle(editToDoList,1000)
 
             <div class="d-flex align-items-baseline px-3">
                 <p>{{noFinishItem}}個待完成項目</p>
-                <button class="ms-auto border-0 bg-white">清除已完成項目</button>
+
+                <!-- 無清除已完成項目API 所以這隱藏掉 -->
+                <!-- <button class="ms-auto border-0 bg-white">清除已完成項目</button> -->
             </div>
 
         </div>

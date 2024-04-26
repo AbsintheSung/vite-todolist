@@ -41,19 +41,28 @@ const emit = defineEmits({
     }
 })
 
+//通知 父組件 需要修改 完成/未完成狀態，請父組件發送Api
 function sendComplete(){
     // props.sendData.status = !props.sendData.status
     emit('changeComplete', props.sendData)
 }
+
+//通知 父組件 需要 刪除該筆資料，請父組件發送Api
 function sendDelete(){
     emit('deleteItem', props.sendData)
 }
+
+//通知 父組件 把編輯的樣式給打開
 function sendEdit(){
     emit('editItem', props.sendData)
 }
+
+//通知 父組件 把編輯的樣式給關閉
 function sendEditOff(){
     emit('editOffItem', props.sendData)
 }
+
+//通知 父組件 需要 編輯該筆資料，請父組件發送Api
 function sendEditItem(){
     emit('editHandle',props.sendData, editContent.value  )    
 }
