@@ -17,7 +17,7 @@ const nickName = ref('')
 const isRequest = ref(true); //在每個請求前 設置一個判斷 ，等另一個請求結束，我們才能發送其他請求
 
 
-onBeforeMount(async ()=>{
+onMounted(async ()=>{
     if(!isRequest) return 
     updateToastMessage('資料讀取中')
     try {
