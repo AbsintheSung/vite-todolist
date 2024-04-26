@@ -224,7 +224,7 @@ async function loginout(){
 const throttle_setData = throttle(setData,1000)
 const throttle_handleComplete = throttle(handleComplete,1000)
 const throttle_handleDelete = throttle(handleDelete,1000)
-const throttle_handleEdit = throttle(handleEdit,1000)
+const throttle_handleEdit = throttle(editToDoList,1000)
  
 
 
@@ -263,9 +263,9 @@ const throttle_handleEdit = throttle(handleEdit,1000)
                 <ListItem v-for="item in dataFilter" :key="item.id" :sendData="item" 
                     @changeComplete="throttle_handleComplete" 
                     @deleteItem="throttle_handleDelete" 
-                    @editItem="throttle_handleEdit" 
+                    @editItem="handleEdit" 
                     @editOffItem="handleEditoff" 
-                    @editHandle='editToDoList'>
+                    @editHandle='throttle_handleEdit'>
                 </ListItem>
 
             </ul>
