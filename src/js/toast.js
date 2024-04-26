@@ -7,7 +7,7 @@ const toastId = ref('')
 //使用者點擊 等待時顯示(loading狀態)
 export  function toastWaitMessage(message){
     toastId.value = toast(`${message}`, {
-        // toastId: toastId.value,
+        toastId: toastId.value,
         theme: "dark",
         position: "top-center",
         autoClose: false,

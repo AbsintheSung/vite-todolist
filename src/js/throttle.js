@@ -3,7 +3,7 @@ export function throttle(func, limit) {
     return function() { 
         let now = Date.now(); 
         if (now - previous > limit) { 
-            func.apply(this, arguments); 
+            func.apply(null, arguments); 
             previous = now; 
         } 
     } 
