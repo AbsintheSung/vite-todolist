@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref,watch } from 'vue';
 import TodoListTitle from '../components/TodoList-Title.vue';
 import TitleImage from '../components/TitleImage.vue';
 import { registerAPI } from '../api/register';
@@ -10,44 +10,39 @@ import {  toastWaitMessage,updateToastMessage,updateToastMessage_Error} from '..
 
 const router = useRouter();
 const isDisabled = ref(false)
-const inputState = ref({
+
+const  registerInput = ref({
+    email:"",
+    nickname:"",
+    password:"",
+    doublePassWord:""
+})
+
+const verifyRule = ref({
     email:{
-        content:'',
-        alert:'',
-        isAlert:false,
         state:false,
+        alert:'',
     },
     nickname:{
-        content:'',
-        alert:'',
-        isAlert:false,
         state:false,
+        alert:'',
     },
     password:{
-        content:'',
-        alert:'',
-        isAlert:false,
         state:false,
+        alert:'',
     },
     doublePassWord:{
-        content:'',
-        alert:'',
-        isAlert:false,
         state:false,
+        alert:'',
     }
 })
 
 
 async function registerAccount(){
-    let user={
-        "email":inputState.value.email.content,
-        "nickname":inputState.value.nickname.content,
-        "password":inputState.value.password.content
-    }
     try {
         isDisabled.value = true
         toastWaitMessage('註冊中')
-        const data = await registerAPI('https://todolist-api.hexschool.io/users/sign_up', 'POST', user);
+        const data = await registerAPI('https://todolist-api.hexschool.io/users/sign_up', 'POST', registerInput.value );
         // console.log('正確資訊', data);
         if(data.status){
             updateToastMessage('註冊成功')
@@ -62,28 +57,37 @@ async function registerAccount(){
 }
 
 
-function verify(){
-    // console.log(inputState.value)
-    Object.keys(inputState.value).forEach(function(item){
-        if(inputState.value[item].content === ''){
-            inputState.value[item].isAlert = true;
-            inputState.value[item].alert = '欄位不可以為空';
+//監聽使用者 輸入的資訊，來設定狀態
+watch(registerInput.value,(newContent)=>{
+    Object.keys(newContent).forEach((item)=>{
+        if(newContent[item]===''){
+            verifyRule.value[item].state = false
         }else{
-            inputState.value[item].state = true;
-            inputState.value[item].isAlert = false;
-            inputState.value[item].alert = '';
+            verifyRule.value[item].state = true
+            verifyRule.value[item].alert = ''
         }
-    })
-    if(inputState.value.doublePassWord.content != inputState.value.password.content && inputState.value.password.content !=""){
-        inputState.value.doublePassWord.isAlert = true
-        inputState.value.doublePassWord.state = false
-        inputState.value.doublePassWord.alert = '密碼與設定不相同'
+    })   
+
+})
+
+function verify(){
+    Object.keys(verifyRule.value).forEach((item)=>{
+        if( !verifyRule.value[item].state ){
+            verifyRule.value[item].alert = '欄位不可以為空'
+        }else{
+            verifyRule.value[item].alert = ''
+        }
+    })   
+
+    if(registerInput.value.doublePassWord !== registerInput.value.password){
+        verifyRule.value['doublePassWord'].state = false;
+        verifyRule.value['doublePassWord'].alert = '密碼與設定不相同';
     }
 
     //判斷 每個的.state狀態都為 true 回傳 true ，否則都為 false
-    return Object.values(inputState.value).every((item)=> item.state)
-
+    return Object.values(verifyRule.value).every((item)=> item.state )
 }
+
 
 
 
@@ -102,34 +106,34 @@ function verify(){
         <div class="register-form-size fm-Noto-Sans-TC pt-md-81">
             <h3 class="fs-20 fw-bold text-center mt-3 mb-26  mt-md-0 mb-md-4">註冊帳號</h3>
 
-            <form class="d-flex flex-column justify-content-center align-items-start">
+            <form class="register-form d-flex flex-column justify-content-center align-items-start">
                 <div class="d-flex flex-column w-100 mb-4">
-                    <label class="mb-1">Email</label>
-                    <input type="text" placeholder="請輸入Email" v-model="inputState.email.content">
-                    <p :class="['noActive',{active:inputState.email.isAlert}]">{{inputState.email.alert}}</p>
+                    <label for="email-input" class="register-label mb-1">Email</label>
+                    <input id="email-input" class="register-input" type="text" placeholder="請輸入Email" v-model="registerInput.email">
+                    <p :class="['noActive',{active: !verifyRule.email.state}]">{{verifyRule.email.alert}}</p>
                 </div>
 
                 <div class="d-flex flex-column w-100 mb-4">
-                    <label class="mb-1">您的暱稱</label>
-                    <input type="text" placeholder="請輸入您的暱稱"  v-model="inputState.nickname.content">
-                    <p :class="['noActive',{active:inputState.nickname.isAlert}]">{{inputState.nickname.alert}}</p>
+                    <label for="nickname-input" class="register-label mb-1">您的暱稱</label>
+                    <input id="nickname-input" class="register-input" type="text" placeholder="請輸入您的暱稱"  v-model="registerInput.nickname">
+                    <p :class="['noActive',{active: !verifyRule.nickname.state}]">{{verifyRule.nickname.alert}}</p>
                 </div>
 
 
                 <div class="d-flex flex-column w-100 mb-4">
-                    <label class="mb-1">Password</label>
-                    <input type="password" placeholder="請輸入密碼" v-model="inputState.password.content">
-                    <p :class="['noActive',{active:inputState.password.isAlert}]">{{inputState.password.alert}}</p>
+                    <label for="password-input" class="register-label mb-1">Password</label>
+                    <input id="password-input" class="register-input" type="password" placeholder="請輸入密碼" v-model="registerInput.password">
+                    <p :class="['noActive',{active: !verifyRule.password.state}]">{{verifyRule.password.alert}}</p>
                 </div>
 
                 <div class="d-flex flex-column w-100 mb-4">
-                    <label class="mb-1">再次輸入密碼</label>
-                    <input type="password" placeholder="請再次輸入密碼" v-model="inputState.doublePassWord.content">
-                    <p :class="['noActive',{active:inputState.doublePassWord.isAlert}]">{{inputState.doublePassWord.alert}}</p>
+                    <label for="doublePassWord" class="register-label mb-1">再次輸入密碼</label>
+                    <input id="doublePassWord" class="register-input" type="password" placeholder="請再次輸入密碼" v-model="registerInput.doublePassWord">
+                    <p :class="['noActive',{active: !verifyRule.doublePassWord.state}]">{{verifyRule.doublePassWord.alert}}</p>
                 </div>
 
 
-                <button class="align-self-center py-12 px-5 bg-dark text-white" :disabled="isDisabled" @click.prevent="verify()? registerAccount():null">註冊帳號</button>
+                <button class="register-btn align-self-center py-12 px-5 bg-dark text-white" :disabled="isDisabled" @click.prevent="verify()? registerAccount():null">註冊帳號</button>
                 <router-link to="/" class="fw-bold text-dark align-self-center mt-4 text-decoration-none">登入</router-link>
             </form>
 
@@ -149,21 +153,21 @@ function verify(){
     color:red;
 }
 
-form{
-    input{
+.register-form{
+    .register-input{
         border-radius: 4px;
         padding: 12px 16px;
         border: none;
     }
-    button{
+    .register-btn{
         border: none;
         border-radius: 10px;
     }
-    input:focus {
+    .register-input:focus {
         outline: none;
     }
 }
-label{
+.register-label{
     font-size: 14px;
     font-weight: bold;
 }
